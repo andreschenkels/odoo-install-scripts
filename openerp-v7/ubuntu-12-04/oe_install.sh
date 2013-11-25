@@ -28,13 +28,7 @@ OE_ADDONS_REV="9154"
 
 #set the superadmin password
 OE_SUPERADMIN="superadminpassword"
-
 OE_CONFIG="openerp-server"
-
-#postgres user and password
-PG_USER="openerp"
-PG_PASSWORD="password"
-PG_SERVER="localhost"
 
 #--------------------------------------------------
 # Install PostgreSQL Server
@@ -49,6 +43,12 @@ yes | sudo apt-get update
 yes | sudo apt-get install pgdg-keyring
 yes | sudo apt-get install postgresql-9.2
 
+echo -e "\n---- Creating the OpenERP PostgreSQL User  ----"
+sudo su - postgres -c "createuser -s openerp" 2> /dev/null || true
+
+echo -e "\n---- PostgreSQL Settings  ----"
+sudo sed -i s/"#listen_addresses = 'localhost'"/"listen_addresses = '*'"/g /etc/postgresql/9.2/main/postgresql.conf
+
 #--------------------------------------------------
 # Install Dependencies
 #--------------------------------------------------
@@ -56,12 +56,8 @@ echo -e "\n---- Install tool packages ----"
 yes | sudo apt-get install wget subversion bzr bzrtools python-pip
 	
 echo -e "\n---- Install python packages ----"
-yes | sudo apt-get install python-dateutil python-feedparser python-ldap \
-python-libxslt1 python-lxml python-mako python-openid python-psycopg2 \
-python-pybabel python-pychart python-pydot python-pyparsing python-reportlab \
-python-simplejson python-tz python-vatnumber python-vobject python-webdav \
-python-werkzeug python-xlwt python-yaml python-zsi python-docutils \
-python-psutil python-mock python-unittest2 python-jinja2
+yes | sudo apt-get install python-dateutil python-feedparser python-ldap python-libxslt1 python-lxml python-mako python-openid python-psycopg2 python-pybabel python-pychart python-pydot python-pyparsing python-reportlab \
+python-simplejson python-tz python-vatnumber python-vobject python-webdav python-werkzeug python-xlwt python-yaml python-zsi python-docutils python-psutil python-mock python-unittest2 python-jinja2
 	
 echo -e "\n---- Install python libraries ----"
 sudo pip install gdata
@@ -85,6 +81,7 @@ sudo su openerp -c "bzr branch lp:openerp-web/7.0 $OE_HOME/web -r $OE_WEB_REV"
 
 echo -e "\n---- Create custom module directory ----"
 sudo su openerp -c "mkdir $OE_HOME/custom"
+sudo su openerp -c "mkdir $OE_HOME/custom/addons"
 
 echo -e "\n---- Setting permissions on home folder ----"
 sudo chown -R $OE_USER:$OE_USER $OE_HOME/*
@@ -95,11 +92,6 @@ sudo chown $OE_USER:$OE_USER /etc/$OE_CONFIG.conf
 sudo chmod 640 /etc/$OE_CONFIG.conf
 
 echo -e "* Change server config file"
-#sudo sed -i s/"db_user = .*"/"db_user = $PG_USER"/g /etc/$OE_CONFIG.conf
-#sudo sed -i s/"db_password = .*"/"db_password = $PG_PASSWORD"/g /etc/$OE_CONFIG.conf
-#sudo sed -i s/"db_host = .*"/"db_host = $PG_SERVER"/g /etc/$OE_CONFIG.conf
-#sudo sed -i s/"; admin_passwd.*"/"admin_passwd = $OE_SUPERADMIN"/g /etc/$OE_CONFIG.conf
-
 sudo su root -c "echo 'logfile = /var/log/$OE_USER/$OE_CONFIG$1.log' >> /etc/$OE_CONFIG.conf"
 sudo su root -c "echo 'addons_path=$OE_HOME/addons,$OE_HOME/web/addons,$OE_HOME/custom/addons' >> /etc/$OE_CONFIG.conf"
 
