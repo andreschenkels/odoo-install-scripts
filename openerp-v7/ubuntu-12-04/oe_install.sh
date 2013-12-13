@@ -109,7 +109,7 @@ sudo chmod 755 $OE_HOME/start.sh
 echo -e "* Create init file"
 echo '#!/bin/sh' >> ~/$OE_CONFIG
 echo '### BEGIN INIT INFO' >> ~/$OE_CONFIG
-echo '# Provides: $OE_CONFIG' >> ~/$OE_CONFIG
+echo '# Provides: @@OE_CONFIG' >> ~/$OE_CONFIG
 echo '# Required-Start: @@@remote_fs @@@syslog' >> ~/$OE_CONFIG
 echo '# Required-Stop: @@@remote_fs @@@syslog' >> ~/$OE_CONFIG
 echo '# Should-Start: @@@network' >> ~/$OE_CONFIG
@@ -120,15 +120,15 @@ echo '# Short-Description: Enterprise Resource Management software' >> ~/$OE_CON
 echo '# Description: Open ERP is a complete ERP and CRM software.' >> ~/$OE_CONFIG
 echo '### END INIT INFO' >> ~/$OE_CONFIG
 echo 'PATH=/bin:/sbin:/usr/bin' >> ~/$OE_CONFIG
-echo 'DAEMON=$OE_HOME/server/openerp-server' >> ~/$OE_CONFIG
-echo 'NAME=$OE_CONFIG' >> ~/$OE_CONFIG
-echo 'DESC=$OE_CONFIG' >> ~/$OE_CONFIG
+echo 'DAEMON=@@OE_HOME/server/openerp-server' >> ~/$OE_CONFIG
+echo 'NAME=@@OE_CONFIG' >> ~/$OE_CONFIG
+echo 'DESC=@@OE_CONFIG' >> ~/$OE_CONFIG
 echo '' >> ~/$OE_CONFIG
 echo '# Specify the user name (Default: openerp).' >> ~/$OE_CONFIG
-echo 'USER=$OE_USER' >> ~/$OE_CONFIG
+echo 'USER=@@OE_USER' >> ~/$OE_CONFIG
 echo '' >> ~/$OE_CONFIG
 echo '# Specify an alternate config file (Default: /etc/openerp-server.conf).' >> ~/$OE_CONFIG
-echo 'CONFIGFILE="/etc/@@@OE_CONFIG"' >> ~/$OE_CONFIG
+echo 'CONFIGFILE="/etc/@@OE_CONFIG"' >> ~/$OE_CONFIG
 echo '' >> ~/$OE_CONFIG
 echo '# pidfile' >> ~/$OE_CONFIG
 echo 'PIDFILE=/var/run/@@@NAME.pid' >> ~/$OE_CONFIG
@@ -180,6 +180,9 @@ echo 'exit 0' >> ~/$OE_CONFIG
 
 echo -e "* Replace @@@ with dollar sign"
 sed -i s/"@@@"/"\$"/g ~/$OE_CONFIG
+sed -i s/"@@OE_CONFIG"/"$OE_CONFIG"/g ~/$OE_CONFIG
+sed -i s/"@@OE_HOME"/"$OE_HOME"/g ~/$OE_CONFIG
+sed -i s/"@@OE_USER"/"$OE_USER"/g ~/$OE_CONFIG
 
 echo -e "* Security Init File"
 sudo mv ~/$OE_CONFIG /etc/init.d/$OE_CONFIG
