@@ -21,6 +21,9 @@
 OE_USER="openerp"
 OE_HOME="/opt/openerp"
 
+#Enter version for checkout "/6.1" for version 6.1, "/7.0" for version 7.0 and "" for trunk
+OE_VERSION="/7.0"
+
 #set bazaar parameters
 
 #BZR_LATEST will use the current version
@@ -62,6 +65,7 @@ sudo su - postgres -c "createuser -s $OE_USER" 2> /dev/null || true
 
 
 
+
 #--------------------------------------------------
 # Install Dependencies
 #--------------------------------------------------
@@ -91,26 +95,26 @@ echo -e "\n---- Getting latest version from bazaar or specific revision ----"
 if [ "$BZR_LATEST" = "true" ]; then
 	if [ "$BZR_LIGHTWEIGHT" = "true" ]; then
 		echo -e "\n---- * Downloading lightweight latest version of OpenERP ----"
-		sudo su $OE_USER -c "bzr checkout --lightweight lp:openobject-server/7.0 $OE_HOME/server"
-		sudo su $OE_USER -c "bzr checkout --lightweight lp:openobject-addons/7.0 $OE_HOME/addons"
-		sudo su $OE_USER -c "bzr checkout --lightweight lp:openerp-web/7.0 $OE_HOME/web"
+		sudo su $OE_USER -c "bzr checkout --lightweight lp:openobject-server$OE_VERSION $OE_HOME/server"
+		sudo su $OE_USER -c "bzr checkout --lightweight lp:openobject-addons$OE_VERSION $OE_HOME/addons"
+		sudo su $OE_USER -c "bzr checkout --lightweight lp:openerp-web$OE_VERSION $OE_HOME/web"
 	else
 		echo -e "\n---- * Downloading latest version of OpenERP ----"
-		sudo su $OE_USER -c "bzr checkout lp:openobject-server/7.0 $OE_HOME/server"
-		sudo su $OE_USER -c "bzr checkout lp:openobject-addons/7.0 $OE_HOME/addons"
-		sudo su $OE_USER -c "bzr checkout lp:openerp-web/7.0 $OE_HOME/web"
+		sudo su $OE_USER -c "bzr checkout lp:openobject-server$OE_VERSION $OE_HOME/server"
+		sudo su $OE_USER -c "bzr checkout lp:openobject-addons$OE_VERSION $OE_HOME/addons"
+		sudo su $OE_USER -c "bzr checkout lp:openerp-web$OE_VERSION $OE_HOME/web"
 	fi
 else
 	if [ "$BZR_LIGHTWEIGHT" = "true" ]; then
 		echo -e "\n---- * Downloading lightweight specific revision of OpenERP ----"
-		sudo su $OE_USER -c "bzr checkout --lightweight lp:openobject-server/7.0 $OE_HOME/server -r $OE_SERVER_REV"
-		sudo su $OE_USER -c "bzr checkout --lightweight lp:openobject-addons/7.0 $OE_HOME/addons -r $OE_ADDONS_REV"
-		sudo su $OE_USER -c "bzr checkout --lightweight lp:openerp-web/7.0 $OE_HOME/web -r $OE_WEB_REV"
+		sudo su $OE_USER -c "bzr checkout --lightweight lp:openobject-server$OE_VERSION $OE_HOME/server -r $OE_SERVER_REV"
+		sudo su $OE_USER -c "bzr checkout --lightweight lp:openobject-addons$OE_VERSION $OE_HOME/addons -r $OE_ADDONS_REV"
+		sudo su $OE_USER -c "bzr checkout --lightweight lp:openerp-web$OE_VERSION $OE_HOME/web -r $OE_WEB_REV"
 	else
 		echo -e "\n---- * Downloading specific revision of OpenERP ----"
-		sudo su $OE_USER -c "bzr checkout lp:openobject-server/7.0 $OE_HOME/server -r $OE_SERVER_REV"
-		sudo su $OE_USER -c "bzr checkout lp:openobject-addons/7.0 $OE_HOME/addons -r $OE_ADDONS_REV"
-		sudo su $OE_USER -c "bzr checkout lp:openerp-web/7.0 $OE_HOME/web -r $OE_WEB_REV"
+		sudo su $OE_USER -c "bzr checkout lp:openobject-server$OE_VERSION $OE_HOME/server -r $OE_SERVER_REV"
+		sudo su $OE_USER -c "bzr checkout lp:openobject-addons$OE_VERSION $OE_HOME/addons -r $OE_ADDONS_REV"
+		sudo su $OE_USER -c "bzr checkout lp:openerp-web$OE_VERSION $OE_HOME/web -r $OE_WEB_REV"
 	fi
 fi
 
