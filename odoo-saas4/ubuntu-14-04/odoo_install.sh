@@ -71,7 +71,7 @@ sudo chown $OE_USER:$OE_USER /var/log/$OE_USER
 # Install OpenERP
 #--------------------------------------------------
 echo -e "\n==== Installing ODOO Server ===="
-sudo su $OE_USER -c "git clone https://www.github.com/odoo/odoo --branch $OE_VERSION $OE_HOME_EXT"
+sudo git clone https://www.github.com/odoo/odoo --branch $OE_VERSION $OE_HOME_EXT
 
 echo -e "\n---- Create custom module directory ----"
 sudo su $OE_USER -c "mkdir $OE_HOME/custom"
