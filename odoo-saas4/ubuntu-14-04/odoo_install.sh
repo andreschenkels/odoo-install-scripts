@@ -64,7 +64,7 @@ OE_HOME="/opt/$OE_USER"
 OE_HOME_EXT="/opt/$OE_USER/$OE_USER-server"
 
 #Enter version for checkout "7.0" for version 7.0, "saas-4" and "master" for trunk
-OE_VERSION="master"
+OE_VERSION="saas-4"
 
 #set the superadmin password
 OE_SUPERADMIN="superadminpassword"
@@ -221,24 +221,3 @@ echo -e "* Start ODOO on Startup"
 sudo update-rc.d $OE_CONFIG defaults
 
 echo "Done! The ODOO server can be started with /etc/init.d/$OE_CONFIG"
-
------
-
-Not yet a working script! So far, various minor changes to :
- - call apt-get less often
- - make calls to GitHub idempotent
- - make mkdir calls idempotent
- - fix missing quote
- - remove superfluous whitespace
-# Committer: yourself <yourself@Trusty0604.cs1cloud.internal>
-#
-# On branch master
-# Your branch is up-to-date with 'origin/master'.
-#
-# Changes to be committed:
-#       modified:   odoo-saas4/ubuntu-14-04/odoo_install.sh
-#
-
-
-
-
