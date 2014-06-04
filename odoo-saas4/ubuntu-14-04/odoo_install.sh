@@ -3,7 +3,7 @@
 # Script for Installation: ODOO Saas4/Trunk server on Ubuntu 14.04 LTS
 # Author: André Schenkels, ICTSTUDIO 2014
 #-------------------------------------------------------------------------------
-#  
+#
 # This script will install ODOO Server on
 # clean Ubuntu 14.04 Server
 #-------------------------------------------------------------------------------
@@ -12,18 +12,59 @@
 # odoo-install
 #
 # EXAMPLE:
-# ./odoo-install 
+# ./odoo-install
 #
 ################################################################################
- 
+#
+# Lazy call for apt updating
+# .   .   .   .   .   .   .
+function update_apt() {
+  if [[ -f /tmp/lastApt ]]
+  then
+    if [[ $(find "/tmp/lastApt" -mmin +721) ]]
+    then
+      echo "Apt lists are stale."
+    else
+      echo "Apt lists recently refreshed."
+      return
+    fi
+  else
+    echo "Apt lists are stale."
+  fi
+  sudo apt-get update
+  sudo apt-get upgrade -y
+  sudo apt-get dist-upgrade -y
+  #
+  touch /tmp/lastApt
+}
+export -f update_apt
+#
+# Idempotent call to GitHub
+# .   .   .   .   .   .   .
+function obtain_source()
+{
+pushd $OE_HOME_EXT
+if [[ -f $OE_HOME_EXT/odoo.py ]]
+then
+  echo "Pulling . . . "
+  sudo git pull
+else
+  echo "Cloning . . . "
+  sudo git clone --branch $OE_VERSION https://www.github.com/odoo/odoo
+fi
+popd
+}
+#
+export -f obtain_source
+#
 ##fixed parameters
 #openerp
 OE_USER="odoo"
 OE_HOME="/opt/$OE_USER"
 OE_HOME_EXT="/opt/$OE_USER/$OE_USER-server"
 
-#Enter version for checkout "7.0" for version 7.0, "saas-4 and "master" for trunk
-OE_VERSION="saas-4"
+#Enter version for checkout "7.0" for version 7.0, "saas-4" and "master" for trunk
+OE_VERSION="master"
 
 #set the superadmin password
 OE_SUPERADMIN="superadminpassword"
@@ -32,16 +73,15 @@ OE_CONFIG="$OE_USER-server"
 #--------------------------------------------------
 # Update Server
 #--------------------------------------------------
-echo -e "\n---- Update Server ----"
-sudo apt-get update
-sudo apt-get upgrade -y
+echo -e "\n---- Update apt repos ----"
+update_apt
 
 #--------------------------------------------------
 # Install PostgreSQL Server
 #--------------------------------------------------
 echo -e "\n---- Install PostgreSQL Server ----"
 sudo apt-get install postgresql -y
-	
+
 echo -e "\n---- PostgreSQL $PG_VERSION Settings  ----"
 sudo sed -i s/"#listen_addresses = 'localhost'"/"listen_addresses = '*'"/g /etc/postgresql/9.3/main/postgresql.conf
 
@@ -53,29 +93,29 @@ sudo su - postgres -c "createuser -s $OE_USER" 2> /dev/null || true
 #--------------------------------------------------
 echo -e "\n---- Install tool packages ----"
 sudo apt-get install wget subversion git bzr bzrtools python-pip -y
-	
+
 echo -e "\n---- Install python packages ----"
 sudo apt-get install python-dateutil python-feedparser python-ldap python-libxslt1 python-lxml python-mako python-openid python-psycopg2 python-pybabel python-pychart python-pydot python-pyparsing python-reportlab python-simplejson python-tz python-vatnumber python-vobject python-webdav python-werkzeug python-xlwt python-yaml python-zsi python-docutils python-psutil python-mock python-unittest2 python-jinja2 python-pypdf -y
-	
+
 echo -e "\n---- Install python libraries ----"
 sudo pip install gdata
-	
+
 echo -e "\n---- Create ODOO system user ----"
 sudo adduser --system --quiet --shell=/bin/bash --home=$OE_HOME --gecos 'ODOO' --group $OE_USER
 
 echo -e "\n---- Create Log directory ----"
-sudo mkdir /var/log/$OE_USER
+sudo mkdir -p /var/log/$OE_USER
 sudo chown $OE_USER:$OE_USER /var/log/$OE_USER
 
 #--------------------------------------------------
 # Install ODOO
 #--------------------------------------------------
-echo -e "\n==== Installing ODOO Server ===="
-sudo git clone --branch $OE_VERSION https://www.github.com/odoo/odoo $OE_HOME_EXT/
+echo -e "\n==== Getting ODOO Source ===="
+obtain_source
 
 echo -e "\n---- Create custom module directory ----"
-sudo su $OE_USER -c "mkdir $OE_HOME/custom"
-sudo su $OE_USER -c "mkdir $OE_HOME/custom/addons"
+sudo su $OE_USER -c "mkdir -p $OE_HOME/custom"
+sudo su $OE_USER -c "mkdir -p $OE_HOME/custom/addons"
 
 echo -e "\n---- Setting permissions on home folder ----"
 sudo chown -R $OE_USER:$OE_USER $OE_HOME/*
@@ -179,6 +219,26 @@ sudo chown root: /etc/init.d/$OE_CONFIG
 
 echo -e "* Start ODOO on Startup"
 sudo update-rc.d $OE_CONFIG defaults
- 
+
 echo "Done! The ODOO server can be started with /etc/init.d/$OE_CONFIG"
+
+-----
+
+Not yet a working script! So far, various minor changes to :
+ - call apt-get less often
+ - make calls to GitHub idempotent
+ - make mkdir calls idempotent
+ - fix missing quote
+ - remove superfluous whitespace
+# Committer: yourself <yourself@Trusty0604.cs1cloud.internal>
+#
+# On branch master
+# Your branch is up-to-date with 'origin/master'.
+#
+# Changes to be committed:
+#       modified:   odoo-saas4/ubuntu-14-04/odoo_install.sh
+#
+
+
+
 
