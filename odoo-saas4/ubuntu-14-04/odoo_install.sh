@@ -18,6 +18,19 @@
 #
 [[ `id -u` -eq 0 ]] || { echo "Must be root to run script"; exit 1; }
 #
+##  Fixed parameters
+#Enter version for checkout "7.0" for version 7.0, "saas-4" and "master" for trunk
+OE_VERSION="saas-4"
+# OE_VERSION="master"
+#
+OE_USER="odoo"
+OE_HOME="/opt/${OE_USER}"
+OE_HOME_EXT="/opt/${OE_USER}/${OE_VERSION}"
+
+#set the superadmin password
+OE_SUPERADMIN="superadminpassword"
+OE_CONFIG="${OE_USER}-server"
+
 # Create Start Up file
 # .   .   .   .   .   .   .
 function create_init_file()
@@ -177,6 +190,8 @@ function update_apt() {
   apt-get update
   apt-get upgrade -y
   apt-get dist-upgrade -y
+  apt-get autoremove -y
+  apt-get clean -y
   #
   touch /tmp/lastApt
 }
@@ -187,7 +202,7 @@ export -f update_apt
 function obtain_source()
 {
 pushd $OE_HOME_EXT
-if [[ -f $OE_HOME_EXT/odoo.py ]]
+if [[ -f $OE_HOME_EXT/openerp-server ]]
 then
   echo "Pulling . . . "
   git pull
@@ -200,20 +215,10 @@ popd
 #
 export -f obtain_source
 #
-##fixed parameters
-#openerp
-OE_USER="odoo"
-OE_HOME="/opt/$OE_USER"
-OE_HOME_EXT="/opt/$OE_USER/$OE_USER-server"
-
-#Enter version for checkout "7.0" for version 7.0, "saas-4" and "master" for trunk
-OE_VERSION="saas-4"
-
-#set the superadmin password
-OE_SUPERADMIN="superadminpassword"
-OE_CONFIG="$OE_USER-server"
-
-
+#
+##################################################
+##  Main Program
+#
 #--------------------------------------------------
 # Update Server
 #--------------------------------------------------
@@ -236,7 +241,7 @@ su - postgres -c "createuser -s $OE_USER" 2> /dev/null || true
 # Install Dependencies
 #--------------------------------------------------
 echo -e "\n---- Install tool packages ----"
-apt-get install wget subversion git bzr bzrtools python-pip -y
+apt-get install wget git python-pip -y
 
 echo -e "\n---- Install python packages ----"
 apt-get install python-dateutil python-feedparser python-ldap python-libxslt1 python-lxml python-mako python-openid python-psycopg2 python-pybabel python-pychart python-pydot python-pyparsing python-reportlab python-simplejson python-tz python-vatnumber python-vobject python-webdav python-werkzeug python-xlwt python-yaml python-zsi python-docutils python-psutil python-mock python-unittest2 python-jinja2 python-pypdf -y
@@ -255,14 +260,15 @@ chown $OE_USER:$OE_USER /var/log/$OE_USER
 # Install ODOO
 #--------------------------------------------------
 echo -e "\n==== Getting ODOO Source ===="
+mkdir -p $OE_HOME_EXT
 obtain_source
+
+echo -e "\n---- Setting permissions on home folder ----"
+chown -R $OE_USER:$OE_USER $OE_HOME
 
 echo -e "\n---- Create custom module directory ----"
 su $OE_USER -c "mkdir -p $OE_HOME/custom"
 su $OE_USER -c "mkdir -p $OE_HOME/custom/addons"
-
-echo -e "\n---- Setting permissions on home folder ----"
-chown -R $OE_USER:$OE_USER $OE_HOME/*
 #
 #--------------------------------------------------
 # Adding ODOO as a deamon (initscript)
