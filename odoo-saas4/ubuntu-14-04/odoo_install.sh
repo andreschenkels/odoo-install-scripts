@@ -201,14 +201,16 @@ export -f update_apt
 # .   .   .   .   .   .   .
 function obtain_source()
 {
-pushd $OE_HOME_EXT
 if [[ -f $OE_HOME_EXT/openerp-server ]]
 then
-  echo "Pulling . . . "
+  echo "Pulling . . . $OE_HOME_EXT"
+  pushd $OE_HOME_EXT
   git pull
 else
-  echo "Cloning . . . "
+  pushd $OE_HOME
+  echo "Cloning . . . $OE_HOME_EXT   $OE_HOME"
   git clone --branch $OE_VERSION https://www.github.com/odoo/odoo
+  mv odoo $OE_VERSION
 fi
 popd
 }
@@ -260,7 +262,7 @@ chown $OE_USER:$OE_USER /var/log/$OE_USER
 # Install ODOO
 #--------------------------------------------------
 echo -e "\n==== Getting ODOO Source ===="
-mkdir -p $OE_HOME_EXT
+mkdir -p $OE_HOME
 obtain_source
 
 echo -e "\n---- Setting permissions on home folder ----"
