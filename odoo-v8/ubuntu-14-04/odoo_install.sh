@@ -81,7 +81,12 @@ echo -e "\n---- Setting permissions on home folder ----"
 sudo chown -R $OE_USER:$OE_USER $OE_HOME/*
 
 echo -e "* Create server config file"
-sudo cp $OE_HOME_EXT/debian/openerp-server.conf /etc/$OE_CONFIG.conf
+if [ $OE_VERSION == "7.0" ]
+then  
+  sudo cp $OE_HOME_EXT/install/openerp-server.conf /etc/$OE_CONFIG.conf
+else
+  sudo cp $OE_HOME_EXT/debian/openerp-server.conf /etc/$OE_CONFIG.conf
+fi
 sudo chown $OE_USER:$OE_USER /etc/$OE_CONFIG.conf
 sudo chmod 640 /etc/$OE_CONFIG.conf
 
