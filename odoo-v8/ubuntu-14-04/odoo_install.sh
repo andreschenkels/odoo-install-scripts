@@ -59,7 +59,11 @@ sudo apt-get install python-dateutil python-feedparser python-ldap python-libxsl
 	
 echo -e "\n---- Install python libraries ----"
 sudo pip install gdata
-	
+
+echo -e "\n---- Install dependencies ----"
+sudo apt-get install npm
+sudo npm install -g less
+
 echo -e "\n---- Create ODOO system user ----"
 sudo adduser --system --quiet --shell=/bin/bash --home=$OE_HOME --gecos 'ODOO' --group $OE_USER
 
