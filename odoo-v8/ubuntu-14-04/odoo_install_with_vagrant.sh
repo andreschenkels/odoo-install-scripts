@@ -18,16 +18,16 @@
  
 ##fixed parameters
 #openerp
-OE_USER="odoo"
+OE_USER="vagrant"
 OE_HOME="/opt/$OE_USER"
-OE_HOME_EXT="/opt/$OE_USER/$OE_USER-server"
+OE_HOME_EXT="/opt/$OE_USER/odoo-server"
 
 #Enter version for checkout "8.0" for version 8.0, "7.0 (version 7), saas-4, saas-5 (opendays version) and "master" for trunk
 OE_VERSION="8.0"
 
 #set the superadmin password
-OE_SUPERADMIN="superadminpassword"
-OE_CONFIG="$OE_USER-server"
+OE_SUPERADMIN="secret"
+OE_CONFIG="odoo-server"
 
 #--------------------------------------------------
 # Update Server
@@ -40,13 +40,15 @@ sudo apt-get upgrade -y
 # Install PostgreSQL Server
 #--------------------------------------------------
 echo -e "\n---- Install PostgreSQL Server ----"
-sudo apt-get install postgresql -y
+sudo apt-get install postgresql postgres-contrib -y
 	
 echo -e "\n---- PostgreSQL $PG_VERSION Settings  ----"
-sudo sed -i s/"#listen_addresses = 'localhost'"/"listen_addresses = '*'"/g /etc/postgresql/9.3/main/postgresql.conf
+sudo echo "#listen_addresses = '*'" >> /etc/postgresql/9.3/main/postgresql.conf
+sudo echo "host all  all  all  md5" >> /etc/postgresql/9.3/main/pg_hba.conf
 
 echo -e "\n---- Creating the ODOO PostgreSQL User  ----"
 sudo su - postgres -c "createuser -s $OE_USER" 2> /dev/null || true
+sudo -u postgres psql -c "ALTER USER $OE_USER WITH PASSWORD '$OE_SUPERADMIN';"
 
 #--------------------------------------------------
 # Install Dependencies
@@ -61,7 +63,7 @@ echo -e "\n---- Install python libraries ----"
 sudo pip install gdata
 	
 echo -e "\n---- Create ODOO system user ----"
-sudo adduser --system --quiet --shell=/bin/bash --home=$OE_HOME --gecos 'ODOO' --group $OE_USER
+# sudo adduser --system --quiet --shell=/bin/bash --home=$OE_HOME --gecos 'ODOO' --group $OE_USER
 
 echo -e "\n---- Create Log directory ----"
 sudo mkdir /var/log/$OE_USER
@@ -74,8 +76,8 @@ echo -e "\n==== Installing ODOO Server ===="
 sudo git clone --branch $OE_VERSION https://www.github.com/odoo/odoo $OE_HOME_EXT/
 
 echo -e "\n---- Create custom module directory ----"
-sudo su $OE_USER -c "mkdir $OE_HOME/custom"
-sudo su $OE_USER -c "mkdir $OE_HOME/custom/addons"
+sudo su $OE_USER -c "mkdir /vagrant/custom_modules"
+sudo su $OE_USER -c "mkdir /vagrant/custom_modules/addons"
 
 echo -e "\n---- Setting permissions on home folder ----"
 sudo chown -R $OE_USER:$OE_USER $OE_HOME/*
@@ -94,7 +96,7 @@ echo -e "* Change server config file"
 sudo sed -i s/"db_user = .*"/"db_user = $OE_USER"/g /etc/$OE_CONFIG.conf
 sudo sed -i s/"; admin_passwd.*"/"admin_passwd = $OE_SUPERADMIN"/g /etc/$OE_CONFIG.conf
 sudo su root -c "echo 'logfile = /var/log/$OE_USER/$OE_CONFIG$1.log' >> /etc/$OE_CONFIG.conf"
-sudo su root -c "echo 'addons_path=$OE_HOME_EXT/addons,$OE_HOME/custom/addons' >> /etc/$OE_CONFIG.conf"
+sudo su root -c "echo 'addons_path=$OE_HOME_EXT/addons,/vagrant/custom_modules/addons' >> /etc/$OE_CONFIG.conf"
 
 echo -e "* Create startup file"
 sudo su root -c "echo '#!/bin/sh' >> $OE_HOME_EXT/start.sh"
