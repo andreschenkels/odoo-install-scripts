@@ -61,8 +61,8 @@ echo -e "\n---- Install python libraries ----"
 sudo pip install gdata
 
 echo -e "\n---- Install wkhtml and place on correct place for ODOO 8 ----"
-sudo wget http://downloads.sourceforge.net/project/wkhtmltopdf/0.12.2/wkhtmltox-0.12.2_linux-trusty-amd64.deb
-sudo dpkg -i wkhtmltox-0.12.2_linux-trusty-amd64.deb
+sudo wget http://downloads.sourceforge.net/project/wkhtmltopdf/0.12.2.1/wkhtmltox-0.12.2.1_linux-trusty-amd64.deb
+sudo dpkg -i wkhtmltox-0.12.2.1_linux-trusty-amd64.deb
 sudo cp /usr/local/bin/wkhtmltopdf /usr/bin
 sudo cp /usr/local/bin/wkhtmltoimage /usr/bin
 	
