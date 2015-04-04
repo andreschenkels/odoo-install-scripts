@@ -72,7 +72,7 @@ chown $OE_USER:$OE_USER /var/log/$OE_USER
 # Install ODOO
 #--------------------------------------------------
 echo -e "\n==== Installing ODOO Server ===="
-git clone --branch $OE_VERSION https://www.github.com/odoo/odoo $OE_HOME_EXT/
+git clone --depth 1 --branch $OE_VERSION https://www.github.com/odoo/odoo $OE_HOME_EXT/
 
 echo -e "\n---- Create custom module directory ----"
 su $OE_USER -c "mkdir $OE_HOME/custom"
