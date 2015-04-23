@@ -61,7 +61,7 @@ echo -e "\n---- Install python libraries ----"
 sudo pip install gdata
 
 echo -e "\n---- Install wkhtml and place on correct place for ODOO 8 ----"
-sudo wget http://downloads.sourceforge.net/project/wkhtmltopdf/archive/0.12.1/wkhtmltox-0.12.1_linux-trusty-amd64.deb
+sudo wget -c http://downloads.sourceforge.net/project/wkhtmltopdf/archive/0.12.1/wkhtmltox-0.12.1_linux-trusty-amd64.deb
 sudo dpkg -i wkhtmltox-0.12.1_linux-trusty-amd64.deb
 sudo cp /usr/local/bin/wkhtmltopdf /usr/bin
 sudo cp /usr/local/bin/wkhtmltoimage /usr/bin
@@ -79,12 +79,12 @@ sudo chown $OE_USER:$OE_USER /var/log/$OE_USER
 echo -e "\n==== Installing ODOO Server ===="
 sudo git clone --branch $OE_VERSION https://www.github.com/odoo/odoo $OE_HOME_EXT/
 
+echo -e "\n---- Setting permissions on home folder ----"
+sudo chown $OE_USER:$OE_USER $OE_HOME 
+
 echo -e "\n---- Create custom module directory ----"
 sudo su $OE_USER -c "mkdir $OE_HOME/custom"
 sudo su $OE_USER -c "mkdir $OE_HOME/custom/addons"
-
-echo -e "\n---- Setting permissions on home folder ----"
-sudo chown -R $OE_USER:$OE_USER $OE_HOME/*
 
 echo -e "* Create server config file"
 sudo cp $OE_HOME_EXT/debian/openerp-server.conf /etc/$OE_CONFIG.conf
@@ -188,5 +188,6 @@ sudo update-rc.d $OE_CONFIG defaults
  
 sudo service $OE_CONFIG start
 echo "Done! The ODOO server can be started with: service $OE_CONFIG start"
+
 
 
