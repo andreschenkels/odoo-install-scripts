@@ -35,6 +35,12 @@ OE_CONFIG="$OE_USER-server"
 echo -e "\n---- Update Server ----"
 sudo apt-get update
 sudo apt-get upgrade -y
+sudo apt-get install -y locales
+sudo export LANGUAGE=en_US.UTF-8
+sudo export LANG=en_US.UTF-8
+sudo export LC_ALL=en_US.UTF-8
+sudo locale-gen en_US.UTF-8
+sudo dpkg-reconfigure locales
 
 #--------------------------------------------------
 # Install PostgreSQL Server
