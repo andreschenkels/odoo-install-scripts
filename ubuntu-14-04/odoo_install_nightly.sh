@@ -30,3 +30,12 @@ OE_VERSION="8.0"
 #--------------------------------------------------
 echo -e "\n---- Update Server ----"
 apt-get update && apt-get dist-upgrade -y
+
+#--------------------------------------------------
+# Install Dependencies
+#--------------------------------------------------
+echo -e "\n---- Install and link wkhtml as needed for ODOO 8.0"
+wget http://download.gna.org/wkhtmltopdf/0.12/0.12.1/wkhtmltox-0.12.1_linux-trusty-amd64.deb
+dpkg -i wkhtmltox-0.12.1_linux-trusty-amd64.deb
+ln -s /usr/local/bin/wkhtmltopdf /usr/bin/wkhtmltopdf
+ln -s /usr/local/bin/wkhtmltoimage /usr/bin/wkhtmltoimage
