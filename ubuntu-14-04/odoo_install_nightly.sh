@@ -21,3 +21,12 @@ if [[ $EUID -ne 0 ]]; then
 	>&2 echo "You need root privileges to do this!"
 	exit 1
 fi
+
+# Enter the Version you want to install. Possible values: 7.0, 8.0, 9.0
+OE_VERSION="8.0"
+
+#--------------------------------------------------
+# Update Server
+#--------------------------------------------------
+echo -e "\n---- Update Server ----"
+apt-get update && apt-get dist-upgrade -y
