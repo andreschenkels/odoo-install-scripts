@@ -15,3 +15,9 @@
 # EXAMPLE sudo ./odoo_install_nightly.sh
 #
 #################################################################################
+
+# check for root-privileges
+if [[ $EUID -ne 0 ]]; then
+	>&2 echo "You need root privileges to do this!"
+	exit 1
+fi
