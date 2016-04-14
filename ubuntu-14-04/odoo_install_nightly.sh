@@ -12,7 +12,7 @@
 #
 # USAGE: (sudo) odoo_install_nightly.sh
 #
-# EXAMPLE sudo ./odoo_install_nightly.sh
+# EXAMPLE: sudo ./odoo_install_nightly.sh
 #
 #################################################################################
 
@@ -22,7 +22,7 @@ if [[ $EUID -ne 0 ]]; then
 	exit 1
 fi
 
-# Enter the Version you want to install. Possible values: 7.0, 8.0, 9.0
+# Enter the Version you want to install. Possible values are 8.0 or 9.0
 OE_VERSION="8.0"
 
 #--------------------------------------------------
@@ -34,8 +34,25 @@ apt-get update && apt-get dist-upgrade -y
 #--------------------------------------------------
 # Install Dependencies
 #--------------------------------------------------
-echo -e "\n---- Install and link wkhtml as needed for ODOO 8.0"
+echo -e "\n---- Install PostgreSQL ----"
+apt-get install postgresql -y
+
+echo -e "\n---- Install and link wkhtml as needed for ODOO 8.0 ----"
 wget http://download.gna.org/wkhtmltopdf/0.12/0.12.1/wkhtmltox-0.12.1_linux-trusty-amd64.deb
 dpkg -i wkhtmltox-0.12.1_linux-trusty-amd64.deb
 ln -s /usr/local/bin/wkhtmltopdf /usr/bin/wkhtmltopdf
 ln -s /usr/local/bin/wkhtmltoimage /usr/bin/wkhtmltoimage
+
+#--------------------------------------------------
+# Add the package source to the list
+#--------------------------------------------------
+echo -e "\n---- Add package source ----"
+wget -O - https://nightly.odoo.com/odoo.key | apt-key add -
+echo "deb http://nightly.odoo.com/$OE_VERSION/nightly/deb/ ./" >> /etc/apt/sources.list
+
+#--------------------------------------------------
+# Install the actual nightly build of ODOO
+#--------------------------------------------------
+apt-get update && apt-get install odoo -y
+
+echo "\nDone! The ODOO server is installed and should already run."
