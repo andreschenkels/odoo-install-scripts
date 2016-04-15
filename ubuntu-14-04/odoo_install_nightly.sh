@@ -10,20 +10,30 @@
 #
 #--------------------------------------------------------------------------------
 #
-# USAGE: (sudo) odoo_install_nightly.sh
+# USAGE: (sudo) odoo_install_nightly.sh [8.0|9.0]
 #
-# EXAMPLE: sudo ./odoo_install_nightly.sh
+# EXAMPLE: sudo ./odoo_install_nightly.sh 8.0
 #
 #################################################################################
 
 # check for root-privileges
-if [ $EUID -ne 0 ]; then
+if [[ $EUID -ne 0 ]]; then
 	echo "You need root privileges to do this!" >&2
 	exit 1
 fi
 
-# Enter the Version you want to install. Possible values are 8.0 or 9.0
-OE_VERSION="8.0"
+# check for invalid or too many parameters
+if ([[ $# -eq 1 ]] && [[ $1 -ne "8.0" ]] && [[ $1 -ne "9.0" ]]) || ([[ $# -gt 1 ]]); then
+	echo "USAGE: $0 [8.0|9.0]"
+	exit 1
+fi
+
+# The Version of ODOO you want to install. Default: 8.0
+if [[ $# -eq 1 ]]; then
+	OE_VERSION="$1"
+else
+	OE_VERSION="8.0"
+fi
 
 #--------------------------------------------------
 # Update Server
@@ -40,7 +50,7 @@ apt-get install postgresql -y
 echo -e "\n---- Install and link wkhtml as needed for ODOO 8.0 ----"
 wget http://download.gna.org/wkhtmltopdf/0.12/0.12.1/wkhtmltox-0.12.1_linux-trusty-amd64.deb && \
 dpkg -i wkhtmltox-0.12.1_linux-trusty-amd64.deb
-if [ $? -eq 0 ]; then
+if [[ $? -eq 0 ]]; then
 	ln -s /usr/local/bin/wkhtmltopdf /usr/bin/wkhtmltopdf
 	ln -s /usr/local/bin/wkhtmltoimage /usr/bin/wkhtmltoimage
 else
