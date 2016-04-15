@@ -40,11 +40,11 @@ apt-get install postgresql -y
 echo -e "\n---- Install and link wkhtml as needed for ODOO 8.0 ----"
 wget http://download.gna.org/wkhtmltopdf/0.12/0.12.1/wkhtmltox-0.12.1_linux-trusty-amd64.deb && \
 dpkg -i wkhtmltox-0.12.1_linux-trusty-amd64.deb
-if [[ $? -eq 0 ]]; then
+if [ $? -eq 0 ]; then
 	ln -s /usr/local/bin/wkhtmltopdf /usr/bin/wkhtmltopdf
 	ln -s /usr/local/bin/wkhtmltoimage /usr/bin/wkhtmltoimage
 else
-	echo "\nThe Installation of wkhtml was not successful!" >&2
+	echo "\nThe installation of wkhtml was not successful!" >&2
 	exit 1
 fi
 
