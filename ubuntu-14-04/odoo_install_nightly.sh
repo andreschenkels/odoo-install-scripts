@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #################################################################################
-# Script for Installation: ODOO nightly builds on Ubuntu 14.04 LST
+# Script for Installation: ODOO nightly builds on Ubuntu 14.04 LTS
 # Author: (c) Martin Brehmer 2016
 #--------------------------------------------------------------------------------
 #
@@ -17,8 +17,8 @@
 #################################################################################
 
 # check for root-privileges
-if [[ $EUID -ne 0 ]]; then
-	>&2 echo "You need root privileges to do this!"
+if [ $EUID -ne 0 ]; then
+	echo "You need root privileges to do this!" >&2
 	exit 1
 fi
 
@@ -38,10 +38,15 @@ echo -e "\n---- Install PostgreSQL ----"
 apt-get install postgresql -y
 
 echo -e "\n---- Install and link wkhtml as needed for ODOO 8.0 ----"
-wget http://download.gna.org/wkhtmltopdf/0.12/0.12.1/wkhtmltox-0.12.1_linux-trusty-amd64.deb
+wget http://download.gna.org/wkhtmltopdf/0.12/0.12.1/wkhtmltox-0.12.1_linux-trusty-amd64.deb && \
 dpkg -i wkhtmltox-0.12.1_linux-trusty-amd64.deb
-ln -s /usr/local/bin/wkhtmltopdf /usr/bin/wkhtmltopdf
-ln -s /usr/local/bin/wkhtmltoimage /usr/bin/wkhtmltoimage
+if [[ $? -eq 0 ]]; then
+	ln -s /usr/local/bin/wkhtmltopdf /usr/bin/wkhtmltopdf
+	ln -s /usr/local/bin/wkhtmltoimage /usr/bin/wkhtmltoimage
+else
+	echo "\nThe Installation of wkhtml was not successful!" >&2
+	exit 1
+fi
 
 #--------------------------------------------------
 # Add the package source to the list
@@ -56,3 +61,5 @@ echo "deb http://nightly.odoo.com/$OE_VERSION/nightly/deb/ ./" >> /etc/apt/sourc
 apt-get update && apt-get install odoo -y
 
 echo "\nDone! The ODOO server is installed and should already run."
+
+exit 0
