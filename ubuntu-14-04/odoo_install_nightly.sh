@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #################################################################################
-# Script for Installation: ODOO nightly builds on Ubuntu 14.04 LTS
+# Script for Installation: odoo nightly builds on Ubuntu 14.04 LTS
 # Author: (c) Martin Brehmer 2016
 #--------------------------------------------------------------------------------
 #
@@ -28,7 +28,7 @@ if ([[ $# -eq 1 ]] && [[ $1 -ne "8.0" ]] && [[ $1 -ne "9.0" ]]) || ([[ $# -gt 1 
 	exit 1
 fi
 
-# The Version of ODOO you want to install. Default: 8.0
+# The Version of odoo you want to install. Default: 8.0
 if [[ $# -eq 1 ]]; then
 	OE_VERSION="$1"
 else
@@ -47,7 +47,7 @@ apt-get update && apt-get dist-upgrade -y
 echo -e "\n---- Install PostgreSQL ----"
 apt-get install postgresql -y
 
-echo -e "\n---- Install and link wkhtml as needed for ODOO 8.0 ----"
+echo -e "\n---- Install and link wkhtml as needed for odoo 8.0 ----"
 wget http://download.gna.org/wkhtmltopdf/0.12/0.12.1/wkhtmltox-0.12.1_linux-trusty-amd64.deb && \
 dpkg -i wkhtmltox-0.12.1_linux-trusty-amd64.deb
 if [[ $? -eq 0 ]]; then
@@ -66,10 +66,11 @@ wget -O - https://nightly.odoo.com/odoo.key | apt-key add -
 echo "deb http://nightly.odoo.com/$OE_VERSION/nightly/deb/ ./" >> /etc/apt/sources.list
 
 #--------------------------------------------------
-# Install the actual nightly build of ODOO
+# Install the actual nightly build of odoo
 #--------------------------------------------------
+echo -e "\n---- Install odoo ----"
 apt-get update && apt-get install odoo -y
 
-echo "\nDone! The ODOO server is installed and should already run."
+echo "\nDone! The odoo server is installed and should already run."
 
 exit 0
