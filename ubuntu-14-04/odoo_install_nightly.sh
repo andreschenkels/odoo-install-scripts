@@ -23,7 +23,7 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 # check for invalid or too many parameters
-if ([[ $# -eq 1 ]] && [[ $1 -ne "8.0" ]] && [[ $1 -ne "9.0" ]]) || ([[ $# -gt 1 ]]); then
+if ([[ $# -eq 1 ]] && [[ $1 != "8.0" ]] && [[ $1 != "9.0" ]]) || ([[ $# -gt 1 ]]); then
 	echo "USAGE: $0 [8.0|9.0]"
 	exit 1
 fi
@@ -51,7 +51,7 @@ echo -e "\n---- Install PostgreSQL ----"
 apt-get install postgresql -y
 
 echo -e "\n---- Install and link wkhtml as needed for odoo 8.0 ----"
-if [[ $OS_MACHINE_TYPE -eq "x86_64" ]]; then
+if [[ $OS_MACHINE_TYPE == "x86_64" ]]; then
 	wget http://download.gna.org/wkhtmltopdf/0.12/0.12.1/wkhtmltox-0.12.1_linux-trusty-amd64.deb && \
 	dpkg -i wkhtmltox-0.12.1_linux-trusty-amd64.deb
 else
@@ -70,7 +70,7 @@ fi
 # Add the package source to the list or change it
 #--------------------------------------------------
 echo -e "\n---- Add package source ----"
-if [[ $OE_VERSION -eq "8.0" ]]; then
+if [[ $OE_VERSION == "8.0" ]]; then
 	if [[ $(grep -c 'deb http://nightly.odoo.com/9.0/nightly/deb/ ./' /etc/apt/sources.list) -eq 1 ]]
 		apt-get remove odoo -y
 		sed -n -i 's!deb http://nightly.odoo.com/9.0/nightly/deb/ ./!deb http://nightly.odoo.com/8.0/nightly/deb/ ./!' /etc/apt/sources.list
@@ -78,7 +78,7 @@ if [[ $OE_VERSION -eq "8.0" ]]; then
 		wget -O - https://nightly.odoo.com/odoo.key | apt-key add -
 		echo "deb http://nightly.odoo.com/8.0/nightly/deb/ ./" >> /etc/apt/sources.list
 	fi
-elif [[ $OE_VERSION -eq "9.0" ]]; then
+elif [[ $OE_VERSION == "9.0" ]]; then
 	if [[ $(grep -c 'deb http://nightly.odoo.com/8.0/nightly/deb/ ./' /etc/apt/sources.list) -eq 1 ]]
 		apt-get remove odoo -y
 		sed -n -i 's!deb http://nightly.odoo.com/8.0/nightly/deb/ ./!deb http://nightly.odoo.com/9.0/nightly/deb/ ./!' /etc/apt/sources.list
