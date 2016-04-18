@@ -38,9 +38,6 @@ fi
 # check for 64 Bit or 32 Bit OS
 OS_MACHINE_TYPE=$(uname -m)
 
-# Do I change the version or do I install a completely new odoo?
-OE_VERSION_CHANGE=0
-
 #--------------------------------------------------
 # Update Server
 #--------------------------------------------------
@@ -70,21 +67,21 @@ else
 fi
 
 #--------------------------------------------------
-# Add the package source to the list
+# Add the package source to the list or change it
 #--------------------------------------------------
 echo -e "\n---- Add package source ----"
 if [[ $OE_VERSION -eq "8.0" ]]
 	if [[ $(grep -c 'deb http://nightly.odoo.com/9.0/nightly/deb/ ./' /etc/apt/sources.list) -eq 1 ]]
+		apt-get remove odoo -y
 		sed -n -i 's!deb http://nightly.odoo.com/9.0/nightly/deb/ ./!deb http://nightly.odoo.com/8.0/nightly/deb/ ./!' /etc/apt/sources.list
-		OE_VERSION_CHANGE=1
 	elif [[ $(grep -c 'deb http://nightly.odoo.com/8.0/nightly/deb/ ./' /etc/apt/sources.list) -eq 0 ]]
 		wget -O - https://nightly.odoo.com/odoo.key | apt-key add -
 		echo "deb http://nightly.odoo.com/8.0/nightly/deb/ ./" >> /etc/apt/sources.list
 	fi
 elif [[ $OE_VERSION -eq "9.0" ]]
 	if [[ $(grep -c 'deb http://nightly.odoo.com/8.0/nightly/deb/ ./' /etc/apt/sources.list) -eq 1 ]]
+		apt-get remove odoo -y
 		sed -n -i 's!deb http://nightly.odoo.com/8.0/nightly/deb/ ./!deb http://nightly.odoo.com/9.0/nightly/deb/ ./!' /etc/apt/sources.list
-		OE_VERSION_CHANGE=1
 	elif [[ $(grep -c 'deb http://nightly.odoo.com/9.0/nightly/deb/ ./' /etc/apt/sources.list) -eq 0 ]]
 		wget -O - https://nightly.odoo.com/odoo.key | apt-key add -
 		echo "deb http://nightly.odoo.com/9.0/nightly/deb/ ./" >> /etc/apt/sources.list
@@ -99,9 +96,6 @@ fi
 # Install the actual nightly build of odoo
 #--------------------------------------------------
 echo -e "\n---- Install odoo ----"
-if [[ $OE_VERSION_CHANGE -eq 1 ]]
-	apt-get remove --purge odoo -y
-fi
 apt-get update && apt-get install odoo -y
 
 echo -e "\nDone! The odoo server is installed and should already run."
