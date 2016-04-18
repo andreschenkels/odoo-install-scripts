@@ -2,7 +2,7 @@
 
 #################################################################################
 # Script for Installation: odoo nightly builds on Ubuntu 14.04 LTS
-# Author: (c) Martin Brehmer 2016
+# Author: (c) 2016 Martin Brehmer
 #--------------------------------------------------------------------------------
 #
 # This script will install ODOO from the package sources for the nightly builds
@@ -62,7 +62,7 @@ if [[ $? -eq 0 ]]; then
 	ln -s /usr/local/bin/wkhtmltopdf /usr/bin/wkhtmltopdf
 	ln -s /usr/local/bin/wkhtmltoimage /usr/bin/wkhtmltoimage
 else
-	echo "\nThe installation of wkhtml was not successful!" >&2
+	echo -e "\nThe installation of wkhtml was not successful!" >&2
 	exit 1
 fi
 
@@ -79,6 +79,6 @@ echo "deb http://nightly.odoo.com/$OE_VERSION/nightly/deb/ ./" >> /etc/apt/sourc
 echo -e "\n---- Install odoo ----"
 apt-get update && apt-get install odoo -y
 
-echo "\nDone! The odoo server is installed and should already run."
+echo -e "\nDone! The odoo server is installed and should already run."
 
 exit 0
