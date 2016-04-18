@@ -51,6 +51,7 @@ echo -e "\n---- Install PostgreSQL ----"
 apt-get install postgresql -y
 
 echo -e "\n---- Install and link wkhtml as needed for odoo 8.0 ----"
+apt-get install fontconfig libfontconfig1 libjpeg-turbo8 libxrender1 -y
 if [[ $OS_MACHINE_TYPE == "x86_64" ]]; then
 	wget http://download.gna.org/wkhtmltopdf/0.12/0.12.1/wkhtmltox-0.12.1_linux-trusty-amd64.deb && \
 	dpkg -i wkhtmltox-0.12.1_linux-trusty-amd64.deb
