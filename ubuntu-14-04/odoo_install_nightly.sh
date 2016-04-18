@@ -35,6 +35,9 @@ else
 	OE_VERSION="8.0"
 fi
 
+# check for 64 Bit or 32 Bit OS
+OS_MACHINE_TYPE=$(uname -m)
+
 #--------------------------------------------------
 # Update Server
 #--------------------------------------------------
@@ -48,8 +51,13 @@ echo -e "\n---- Install PostgreSQL ----"
 apt-get install postgresql -y
 
 echo -e "\n---- Install and link wkhtml as needed for odoo 8.0 ----"
-wget http://download.gna.org/wkhtmltopdf/0.12/0.12.1/wkhtmltox-0.12.1_linux-trusty-amd64.deb && \
-dpkg -i wkhtmltox-0.12.1_linux-trusty-amd64.deb
+if [[ $OS_MACHINE_TYPE -eq "x86_64" ]]
+	wget http://download.gna.org/wkhtmltopdf/0.12/0.12.1/wkhtmltox-0.12.1_linux-trusty-amd64.deb && \
+	dpkg -i wkhtmltox-0.12.1_linux-trusty-amd64.deb
+else
+	wget http://download.gna.org/wkhtmltopdf/0.12/0.12.1/wkhtmltox-0.12.1_linux-trusty-i386.deb && \
+	dpkg -i wkhtmltox-0.12.1_linux-trusty-i386.deb
+fi
 if [[ $? -eq 0 ]]; then
 	ln -s /usr/local/bin/wkhtmltopdf /usr/bin/wkhtmltopdf
 	ln -s /usr/local/bin/wkhtmltoimage /usr/bin/wkhtmltoimage
