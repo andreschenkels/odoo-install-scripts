@@ -70,8 +70,25 @@ fi
 # Add the package source to the list
 #--------------------------------------------------
 echo -e "\n---- Add package source ----"
-wget -O - https://nightly.odoo.com/odoo.key | apt-key add -
-echo "deb http://nightly.odoo.com/$OE_VERSION/nightly/deb/ ./" >> /etc/apt/sources.list
+if [[ $OE_VERSION -eq "8.0" ]]
+	if [[ $(grep -c 'deb http://nightly.odoo.com/9.0/nightly/deb/ ./' /etc/apt/sources.list) -eq 1 ]]
+		sed -n -i 's!deb http://nightly.odoo.com/9.0/nightly/deb/ ./!deb http://nightly.odoo.com/8.0/nightly/deb/ ./!' /etc/apt/sources.list
+	elif [[ $(grep -c 'deb http://nightly.odoo.com/8.0/nightly/deb/ ./' /etc/apt/sources.list) -eq 0 ]]
+		wget -O - https://nightly.odoo.com/odoo.key | apt-key add -
+		echo "deb http://nightly.odoo.com/8.0/nightly/deb/ ./" >> /etc/apt/sources.list
+	fi
+elif [[ $OE_VERSION -eq "9.0" ]]
+	if [[ $(grep -c 'deb http://nightly.odoo.com/8.0/nightly/deb/ ./' /etc/apt/sources.list) -eq 1 ]]
+		sed -n -i 's!deb http://nightly.odoo.com/8.0/nightly/deb/ ./!deb http://nightly.odoo.com/9.0/nightly/deb/ ./!' /etc/apt/sources.list
+	elif [[ $(grep -c 'deb http://nightly.odoo.com/9.0/nightly/deb/ ./' /etc/apt/sources.list) -eq 0 ]]
+		wget -O - https://nightly.odoo.com/odoo.key | apt-key add -
+		echo "deb http://nightly.odoo.com/9.0/nightly/deb/ ./" >> /etc/apt/sources.list
+	fi
+else
+	echo -e "\n Unsopported version number for odoo" >&2
+	echo "USAGE: $0 [8.0|9.0]"
+	exit 1
+fi
 
 #--------------------------------------------------
 # Install the actual nightly build of odoo
