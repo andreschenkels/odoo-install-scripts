@@ -74,7 +74,7 @@ echo -e "\n---- Add package source ----"
 if [[ $OE_VERSION == "8.0" ]]; then
 	if [[ $(grep -c 'deb http://nightly.odoo.com/9.0/nightly/deb/ ./' /etc/apt/sources.list) -eq 1 ]]; then
 		apt-get remove odoo -y
-		sed -n -i 's!deb http://nightly.odoo.com/9.0/nightly/deb/ ./!deb http://nightly.odoo.com/8.0/nightly/deb/ ./!' /etc/apt/sources.list
+		sed -i 's!deb http://nightly.odoo.com/9.0/nightly/deb/ ./!deb http://nightly.odoo.com/8.0/nightly/deb/ ./!' /etc/apt/sources.list
 	elif [[ $(grep -c 'deb http://nightly.odoo.com/8.0/nightly/deb/ ./' /etc/apt/sources.list) -eq 0 ]]; then
 		wget -O - https://nightly.odoo.com/odoo.key | apt-key add -
 		echo "deb http://nightly.odoo.com/8.0/nightly/deb/ ./" >> /etc/apt/sources.list
@@ -82,7 +82,7 @@ if [[ $OE_VERSION == "8.0" ]]; then
 elif [[ $OE_VERSION == "9.0" ]]; then
 	if [[ $(grep -c 'deb http://nightly.odoo.com/8.0/nightly/deb/ ./' /etc/apt/sources.list) -eq 1 ]]; then
 		apt-get remove odoo -y
-		sed -n -i 's!deb http://nightly.odoo.com/8.0/nightly/deb/ ./!deb http://nightly.odoo.com/9.0/nightly/deb/ ./!' /etc/apt/sources.list
+		sed -i 's!deb http://nightly.odoo.com/8.0/nightly/deb/ ./!deb http://nightly.odoo.com/9.0/nightly/deb/ ./!' /etc/apt/sources.list
 	elif [[ $(grep -c 'deb http://nightly.odoo.com/9.0/nightly/deb/ ./' /etc/apt/sources.list) -eq 0 ]]; then
 		wget -O - https://nightly.odoo.com/odoo.key | apt-key add -
 		echo "deb http://nightly.odoo.com/9.0/nightly/deb/ ./" >> /etc/apt/sources.list
