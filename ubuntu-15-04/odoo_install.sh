@@ -1,11 +1,11 @@
 #!/bin/bash
 ################################################################################
-# Script for Installation: ODOO 9.0 Community server on Ubuntu 14.04 LTS
+# Script for Installation: ODOO 9.0 Community server on Ubuntu 15.04
 # Author: André Schenkels, ICTSTUDIO 2015
 #-------------------------------------------------------------------------------
 #  
-# This script will install ODOO Server on
-# clean Ubuntu 14.04 Server
+# This script will install ODOO Community Server on
+# clean Ubuntu 15.04 Server
 #-------------------------------------------------------------------------------
 # USAGE:
 #
@@ -15,7 +15,9 @@
 # ./odoo-install 
 #
 ################################################################################
-
+ 
+##fixed parameters
+#openerp
 OE_USER="odoo"
 OE_HOME="/opt/$OE_USER"
 OE_HOME_EXT="/opt/$OE_USER/$OE_USER-server"
@@ -26,6 +28,7 @@ OE_VERSION="9.0"
 #set the superadmin password
 OE_SUPERADMIN="superadminpassword"
 OE_CONFIG="$OE_USER-server"
+INIT_FILE=/lib/systemd/system/$OE_CONFIG.service
 
 #--------------------------------------------------
 # Update Server
@@ -38,23 +41,23 @@ sudo apt-get install -y locales
 #--------------------------------------------------
 # Install PostgreSQL Server
 #--------------------------------------------------
-sudo export LANGUAGE=en_US.UTF-8
-sudo export LANG=en_US.UTF-8
-sudo export LC_ALL=en_US.UTF-8
-sudo locale-gen en_US.UTF-8
 sudo dpkg-reconfigure locales
+sudo locale-gen C.UTF-8
+sudo /usr/sbin/update-locale LANG=C.UTF-8
+
+echo -e "\n---- Set locales ----"
+echo 'LC_ALL=C.UTF-8' >> /etc/environment
 
 echo -e "\n---- Install PostgreSQL Server ----"
 sudo apt-get install postgresql -y
-
+	
 echo -e "\n---- PostgreSQL $PG_VERSION Settings  ----"
 sudo sed -i s/"#listen_addresses = 'localhost'"/"listen_addresses = '*'"/g /etc/postgresql/9.4/main/postgresql.conf
 
 echo -e "\n---- Creating the ODOO PostgreSQL User  ----"
 sudo su - postgres -c "createuser -s $OE_USER" 2> /dev/null || true
 
-sudo service postgresql restart
-
+sudo systemctl restart postgresql.service
 #--------------------------------------------------
 # System Settings
 #--------------------------------------------------
@@ -101,10 +104,10 @@ sudo chown -R $OE_USER:$OE_USER $OE_HOME/*
 #--------------------------------------------------
 echo -e "\n---- Install tool packages ----"
 sudo pip install -r $OE_HOME_EXT/requirements.txt
-
+	
 #echo -e "\n---- Install python packages ----"
 sudo easy_install pyPdf vatnumber pydot psycogreen suds ofxparse
-
+	
 
 #--------------------------------------------------
 # Configure ODOO
@@ -134,88 +137,32 @@ sudo chmod 755 $OE_HOME_EXT/start.sh
 #--------------------------------------------------
 # Adding ODOO as a deamon (initscript)
 #--------------------------------------------------
+sudo touch $INIT_FILE
+sudo chmod 0700 $INIT_FILE
 
-echo -e "* Create init file"
-echo '#!/bin/sh' >> ~/$OE_CONFIG
-echo '### BEGIN INIT INFO' >> ~/$OE_CONFIG
-echo "# Provides: $OE_CONFIG" >> ~/$OE_CONFIG
-echo '# Required-Start: $remote_fs $syslog' >> ~/$OE_CONFIG
-echo '# Required-Stop: $remote_fs $syslog' >> ~/$OE_CONFIG
-echo '# Should-Start: $network' >> ~/$OE_CONFIG
-echo '# Should-Stop: $network' >> ~/$OE_CONFIG
-echo '# Default-Start: 2 3 4 5' >> ~/$OE_CONFIG
-echo '# Default-Stop: 0 1 6' >> ~/$OE_CONFIG
-echo '# Short-Description: Enterprise Business Applications' >> ~/$OE_CONFIG
-echo '# Description: ODOO Business Applications' >> ~/$OE_CONFIG
-echo '### END INIT INFO' >> ~/$OE_CONFIG
-echo 'PATH=/bin:/sbin:/usr/bin' >> ~/$OE_CONFIG
-echo "DAEMON=$OE_HOME_EXT/openerp-server" >> ~/$OE_CONFIG
-echo "NAME=$OE_CONFIG" >> ~/$OE_CONFIG
-echo "DESC=$OE_CONFIG" >> ~/$OE_CONFIG
-echo '' >> ~/$OE_CONFIG
-echo '# Specify the user name (Default: odoo).' >> ~/$OE_CONFIG
-echo "USER=$OE_USER" >> ~/$OE_CONFIG
-echo '' >> ~/$OE_CONFIG
-echo '# Specify an alternate config file (Default: /etc/openerp-server.conf).' >> ~/$OE_CONFIG
-echo "CONFIGFILE=\"/etc/$OE_CONFIG.conf\"" >> ~/$OE_CONFIG
-echo '' >> ~/$OE_CONFIG
-echo '# pidfile' >> ~/$OE_CONFIG
-echo 'PIDFILE=/var/run/$NAME.pid' >> ~/$OE_CONFIG
-echo '' >> ~/$OE_CONFIG
-echo '# Additional options that are passed to the Daemon.' >> ~/$OE_CONFIG
-echo 'DAEMON_OPTS="-c $CONFIGFILE"' >> ~/$OE_CONFIG
-echo '[ -x $DAEMON ] || exit 0' >> ~/$OE_CONFIG
-echo '[ -f $CONFIGFILE ] || exit 0' >> ~/$OE_CONFIG
-echo 'checkpid() {' >> ~/$OE_CONFIG
-echo '[ -f $PIDFILE ] || return 1' >> ~/$OE_CONFIG
-echo 'pid=`cat $PIDFILE`' >> ~/$OE_CONFIG
-echo '[ -d /proc/$pid ] && return 0' >> ~/$OE_CONFIG
-echo 'return 1' >> ~/$OE_CONFIG
-echo '}' >> ~/$OE_CONFIG
-echo '' >> ~/$OE_CONFIG
-echo 'case "${1}" in' >> ~/$OE_CONFIG
-echo 'start)' >> ~/$OE_CONFIG
-echo 'echo -n "Starting ${DESC}: "' >> ~/$OE_CONFIG
-echo 'start-stop-daemon --start --quiet --pidfile ${PIDFILE} \' >> ~/$OE_CONFIG
-echo '--chuid ${USER} --background --make-pidfile \' >> ~/$OE_CONFIG
-echo '--exec ${DAEMON} -- ${DAEMON_OPTS}' >> ~/$OE_CONFIG
-echo 'echo "${NAME}."' >> ~/$OE_CONFIG
-echo ';;' >> ~/$OE_CONFIG
-echo 'stop)' >> ~/$OE_CONFIG
-echo 'echo -n "Stopping ${DESC}: "' >> ~/$OE_CONFIG
-echo 'start-stop-daemon --stop --quiet --pidfile ${PIDFILE} \' >> ~/$OE_CONFIG
-echo '--oknodo' >> ~/$OE_CONFIG
-echo 'echo "${NAME}."' >> ~/$OE_CONFIG
-echo ';;' >> ~/$OE_CONFIG
-echo '' >> ~/$OE_CONFIG
-echo 'restart|force-reload)' >> ~/$OE_CONFIG
-echo 'echo -n "Restarting ${DESC}: "' >> ~/$OE_CONFIG
-echo 'start-stop-daemon --stop --quiet --pidfile ${PIDFILE} \' >> ~/$OE_CONFIG
-echo '--oknodo' >> ~/$OE_CONFIG
-echo 'sleep 1' >> ~/$OE_CONFIG
-echo 'start-stop-daemon --start --quiet --pidfile ${PIDFILE} \' >> ~/$OE_CONFIG
-echo '--chuid ${USER} --background --make-pidfile \' >> ~/$OE_CONFIG
-echo '--exec ${DAEMON} -- ${DAEMON_OPTS}' >> ~/$OE_CONFIG
-echo 'echo "${NAME}."' >> ~/$OE_CONFIG
-echo ';;' >> ~/$OE_CONFIG
-echo '*)' >> ~/$OE_CONFIG
-echo 'N=/etc/init.d/${NAME}' >> ~/$OE_CONFIG
-echo 'echo "Usage: ${NAME} {start|stop|restart|force-reload}" >&2' >> ~/$OE_CONFIG
-echo 'exit 1' >> ~/$OE_CONFIG
-echo ';;' >> ~/$OE_CONFIG
-echo '' >> ~/$OE_CONFIG
-echo 'esac' >> ~/$OE_CONFIG
-echo 'exit 0' >> ~/$OE_CONFIG
+echo -e "* Create systemd unit file"
+echo '[Unit]' >> $INIT_FILE
+echo 'Description=ODOO Application Server' >> $INIT_FILE
+echo 'Requires=postgresql.service' >> $INIT_FILE
+echo 'After=postgresql.service' >> $INIT_FILE
+echo '[Install]' >> $INIT_FILE
+echo "Alias=$OE_CONFIG.service" >> $INIT_FILE
+echo '[Service]' >> $INIT_FILE
+echo 'Type=simple' >> $INIT_FILE
+echo 'PermissionsStartOnly=true' >> $INIT_FILE
+echo "User=$OE_USER" >> $INIT_FILE
+echo "Group=$OE_USER" >> $INIT_FILE
+echo "SyslogIdentifier=$OE_CONFIG" >> $INIT_FILE
+echo "PIDFile=/run/odoo/$OE_CONFIG.pid" >> $INIT_FILE
+echo "ExecStartPre=/usr/bin/install -d -m755 -o $OE_USER -g $OE_USER /run/odoo" >> $INIT_FILE
+echo "ExecStart=/opt/odoo/odoo-server/openerp-server -c /etc/$OE_CONFIG.conf --pid=/run/odoo/$OE_CONFIG.pid --syslog $OPENERP_ARGS" >> $INIT_FILE
+echo 'ExecStop=/bin/kill $MAINPID' >> $INIT_FILE
+echo '[Install]' >> $INIT_FILE
+echo 'WantedBy=multi-user.target' >> $INIT_FILE
 
-echo -e "* Security Init File"
-sudo mv ~/$OE_CONFIG /etc/init.d/$OE_CONFIG
-sudo chmod 755 /etc/init.d/$OE_CONFIG
-sudo chown root: /etc/init.d/$OE_CONFIG
+echo -e "* Enabling Systemd File"
+sudo systemctl enable $INIT_FILE
 
-echo -e "* Start ODOO on Startup"
-sudo update-rc.d $OE_CONFIG defaults
- 
-sudo service $OE_CONFIG start
-echo "Done! The ODOO server can be started with: service $OE_CONFIG start"
-
+echo -e "-- Starting ODOO Server --"
+sudo systemctl start $OE_CONFIG.service
 
