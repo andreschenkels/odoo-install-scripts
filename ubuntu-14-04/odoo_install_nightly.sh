@@ -53,16 +53,10 @@ apt-get install postgresql -y
 echo -e "\n---- Install and link wkhtml as needed for odoo 8.0 ----"
 apt-get install fontconfig fontconfig-config fonts-dejavu-core libfontconfig1 libjpeg-turbo8 libxrender1 -y
 if [[ $OS_MACHINE_TYPE == "x86_64" ]]; then
-	if [[ -e wkhtmltox-0.12.1_linux-trusty-amd64.deb ]]; then
-		rm wkhtmltox-0.12.1_linux-trusty-amd64.deb
-	fi
-	wget http://download.gna.org/wkhtmltopdf/0.12/0.12.1/wkhtmltox-0.12.1_linux-trusty-amd64.deb && \
+	wget -c http://download.gna.org/wkhtmltopdf/0.12/0.12.1/wkhtmltox-0.12.1_linux-trusty-amd64.deb && \
 	dpkg -i wkhtmltox-0.12.1_linux-trusty-amd64.deb
 else
-	if [[ -e wkhtmltox-0.12.1_linux-trusty-i386.deb ]]; then
-		rm wkhtmltox-0.12.1_linux-trusty-i386.deb
-	fi
-	wget http://download.gna.org/wkhtmltopdf/0.12/0.12.1/wkhtmltox-0.12.1_linux-trusty-i386.deb && \
+	wget -c http://download.gna.org/wkhtmltopdf/0.12/0.12.1/wkhtmltox-0.12.1_linux-trusty-i386.deb && \
 	dpkg -i wkhtmltox-0.12.1_linux-trusty-i386.deb
 fi
 if [[ $? -eq 0 ]]; then
