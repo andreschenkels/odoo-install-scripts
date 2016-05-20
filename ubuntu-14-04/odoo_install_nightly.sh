@@ -67,7 +67,7 @@ if [[ $OE_VERSION == "9.0" ]];then
 			dpkg -i wkhtmltox-0.12.2.1_linux-trusty-i386.deb
 		fi
 	fi
-elif [[ $EO_VERSION == "8.0" ]]
+elif [[ $OE_VERSION == "8.0" ]]
 	if [[ $OS_MACHINE_TYPE == "x86_64" ]]; then
 		wget -c http://download.gna.org/wkhtmltopdf/0.12/0.12.1/wkhtmltox-0.12.1_linux-trusty-amd64.deb && \
 		dpkg -i wkhtmltox-0.12.1_linux-trusty-amd64.deb
