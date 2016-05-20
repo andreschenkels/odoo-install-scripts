@@ -68,7 +68,7 @@ if [[ $OE_VERSION == "9.0" ]];then
 		fi
 	fi
 elif [[ $EO_VERSION == "8.0" ]]
-   if [[ $OS_MACHINE_TYPE == "x86_64" ]]; then
+	if [[ $OS_MACHINE_TYPE == "x86_64" ]]; then
 		wget -c http://download.gna.org/wkhtmltopdf/0.12/0.12.1/wkhtmltox-0.12.1_linux-trusty-amd64.deb && \
 		dpkg -i wkhtmltox-0.12.1_linux-trusty-amd64.deb
 		if [[ $? -ne 0 ]];then
@@ -85,7 +85,7 @@ elif [[ $EO_VERSION == "8.0" ]]
 	fi
 else
 	echo -e "\n Unsopported version number for odoo" >&2
-   echo "USAGE: $0 [8.0|9.0]"
+	echo "USAGE: $0 [8.0|9.0]"
 	exit 1
 fi
 if [[ $? -eq 0 ]]; then
