@@ -2,3 +2,6 @@
 
 # Debian packages
 *.deb
+
+# Backup-files from editors
+*~
