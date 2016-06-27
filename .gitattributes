@@ -1,4 +1,4 @@
-* text=auto
+* text=auto filter=tabspace
 
 *.sh text
 *.md text
