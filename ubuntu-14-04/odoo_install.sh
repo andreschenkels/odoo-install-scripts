@@ -23,6 +23,9 @@ OE_HOME_EXT="/opt/$OE_USER/$OE_USER-server"
 #Enter version for checkout "9.0" for version 9.0,"8.0" for version 8.0, "7.0 (version 7), "master" for trunk
 OE_VERSION="9.0"
 
+#Choose the port on which your Odoo should run (xmlrpc-port)
+OE_PORT="8069"
+
 #set the superadmin password
 OE_SUPERADMIN="superadminpassword"
 OE_CONFIG="$OE_USER-server"
@@ -123,6 +126,7 @@ sudo sed -i "/addons_path/d" /etc/$OE_CONFIG.conf
 echo -e "** Add correct lines"
 sudo su root -c "echo 'db_user = $OE_USER' >> /etc/$OE_CONFIG.conf"
 sudo su root -c "echo 'admin_passwd = $OE_SUPERADMIN' >> /etc/$OE_CONFIG.conf"
+sudo su root -c "echo 'xmlrpc_port = $OE_PORT' >> /etc/$OE_CONFIG.conf"
 sudo su root -c "echo 'logfile = /var/log/$OE_USER/$OE_CONFIG$1.log' >> /etc/$OE_CONFIG.conf"
 sudo su root -c "echo 'addons_path=$OE_HOME_EXT/addons,$OE_HOME/custom/addons' >> /etc/$OE_CONFIG.conf"
 
