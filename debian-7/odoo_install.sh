@@ -41,7 +41,7 @@ apt-get upgrade -y
 #--------------------------------------------------
 echo -e "\n---- Install PostgreSQL Server ----"
 apt-get install postgresql -y
-	
+
 echo -e "\n---- PostgreSQL $PG_VERSION Settings  ----"
 sed -i s/"#listen_addresses = 'localhost'"/"listen_addresses = '*'"/g /etc/postgresql/9.1/main/postgresql.conf
 
@@ -53,14 +53,14 @@ su - postgres -c "createuser -s $OE_USER" 2> /dev/null || true
 #--------------------------------------------------
 echo -e "\n---- Install tool packages ----"
 apt-get install wget subversion git bzr bzrtools python-pip -y
-	
+
 echo -e "\n---- Install python packages ----"
 apt-get install python-dateutil python-feedparser python-ldap python-libxslt1 python-lxml python-mako python-openid python-psycopg2 python-pybabel python-pychart python-pydot python-pyparsing python-reportlab python-simplejson python-tz python-vatnumber python-vobject python-webdav python-werkzeug python-xlwt python-yaml python-zsi python-docutils python-psutil python-mock python-unittest2 python-jinja2 python-pypdf python-decorator python-requests python-passlib libjpeg-dev -y
-	
+
 echo -e "\n---- Install python libraries ----"
 pip install gdata
 pip install -I pillow
-	
+
 echo -e "\n---- Create ODOO system user ----"
 adduser --system --quiet --shell=/bin/bash --home=$OE_HOME --gecos 'ODOO' --group $OE_USER
 
