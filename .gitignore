@@ -1,0 +1,14 @@
+!.gitignore
+!.gitattributes
+
+# Debian packages
+*.deb
+
+# Backup-files from editors
+*~
+
+# Backu-files from mergetools
+*.orig
+
+# Swap-files
+*.swp
